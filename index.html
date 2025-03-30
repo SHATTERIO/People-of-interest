@@ -73,8 +73,14 @@
       margin-right: auto;
     }
   </style>
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
 </head>
 <body>
+  <!-- Google Sign-In -->
+  <div id="google-signin">
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+  </div>
+
   <!-- Island 1: Main island with debt entry form -->
   <div class="island" id="mainIsland">
     <h2>New Debt</h2>
@@ -85,11 +91,13 @@
     <input type="time" id="time">
     <button onclick="addDebt()">Add Person</button>
   </div>
+
   <!-- Island 2: Unpaid -->
   <div class="island" id="unpaidIsland">
     <h3>Unpaid</h3>
     <div id="unpaidList"></div>
   </div>
+
   <!-- Island 3: Paid -->
   <div class="island" id="paidIsland">
     <h3>Paid</h3>
@@ -97,12 +105,31 @@
   </div>
 
   <script>
+    let user = null; // Track logged-in user
+
+    function onSignIn(googleUser) {
+      const profile = googleUser.getBasicProfile();
+      user = {
+        name: profile.getName(),
+        email: profile.getEmail(),
+        id_token: googleUser.getAuthResponse().id_token
+      };
+      console.log('Logged in as: ' + user.name);
+      // Here you can send user data to the back-end for saving user data if needed
+    }
+
     function addDebt() {
+      if (!user) {
+        alert("Please sign in first!");
+        return;
+      }
+
       const name = document.getElementById("name").value;
       const amount = document.getElementById("amount").value;
       const reason = document.getElementById("reason").value;
       const date = document.getElementById("date").value;
       const time = document.getElementById("time").value;
+      
       if (name && amount && reason && date && time) {
         const listItem = document.createElement("div");
         listItem.classList.add("list-item");
@@ -133,11 +160,11 @@
       const arrow = header.querySelector('.toggle-arrow');
       if (details.style.display === "flex") {
         details.style.display = "none";
-        arrow.textContent = "";  // Rotate right for collapse
+        arrow.textContent = ">";  // Rotate right for collapse
         arrow.style.transform = "rotate(90deg)";  // Arrow pointing right
       } else {
         details.style.display = "flex";
-        arrow.textContent = "";  // Rotate left for expand
+        arrow.textContent = "<";  // Rotate left for expand
         arrow.style.transform = "rotate(-90deg)";  // Arrow pointing left
       }
     }
