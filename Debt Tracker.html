@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debt Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .island {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      width: 270px;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .list-item {
+      background: #e3e3e3;
+      border-radius: 20px; /* Squircle effect */
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px;
+      cursor: pointer;
+      background: #dcdcdc;
+    }
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+    }
+    .checkbox-container {
+      margin-right: 10px;
+    }
+    .details {
+      display: none;
+      flex-direction: column;
+      text-align: left;
+      padding: 10px;
+      background: #f0f0f0;
+    }
+    .toggle-arrow {
+      font-size: 18px;
+      margin-left: auto;
+      margin-right: -10px; /* Move further right */
+    }
+    .paid {
+      text-decoration: line-through;
+      color: green;
+    }
+    input, button {
+      width: 90%; /* Shrink width */
+      padding: 10px;
+      margin: 5px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  </style>
+</head>
+<body>
+  <!-- Island 1: Main island with debt entry form -->
+  <div class="island" id="mainIsland">
+    <h2>New Debt</h2>
+    <input type="text" id="name" placeholder="Name">
+    <input type="number" id="amount" placeholder="Amount (R)">
+    <input type="text" id="reason" placeholder="Reason">
+    <input type="date" id="date">
+    <input type="time" id="time">
+    <button onclick="addDebt()">Add Person</button>
+  </div>
+  <!-- Island 2: Unpaid -->
+  <div class="island" id="unpaidIsland">
+    <h3>Unpaid</h3>
+    <div id="unpaidList"></div>
+  </div>
+  <!-- Island 3: Paid -->
+  <div class="island" id="paidIsland">
+    <h3>Paid</h3>
+    <div id="paidList"></div>
+  </div>
+
+  <script>
+    function addDebt() {
+      const name = document.getElementById("name").value;
+      const amount = document.getElementById("amount").value;
+      const reason = document.getElementById("reason").value;
+      const date = document.getElementById("date").value;
+      const time = document.getElementById("time").value;
+      if (name && amount && reason && date && time) {
+        const listItem = document.createElement("div");
+        listItem.classList.add("list-item");
+        listItem.innerHTML = `
+          <div class="header" onclick="toggleCollapse(this)">
+            <div class="checkbox-container">
+              <input type="checkbox" onclick="markPaid(event, this)">
+            </div>
+            <div class="header-content">
+              <span><strong>${name}</strong> - R${amount}</span>
+            </div>
+            <span class="toggle-arrow">></span> <!-- Arrow for expand -->
+          </div>
+          <div class="details">
+            <div><strong>Reason:</strong> ${reason}</div>
+            <div><strong>Date:</strong> ${date}</div>
+            <div><strong>Time:</strong> ${time}</div>
+          </div>
+        `;
+        document.getElementById("unpaidList").appendChild(listItem);
+        clearForm();
+      }
+    }
+
+    function toggleCollapse(header) {
+      if (event.target.type === 'checkbox') return;
+      const details = header.nextElementSibling;
+      const arrow = header.querySelector('.toggle-arrow');
+      if (details.style.display === "flex") {
+        details.style.display = "none";
+        arrow.textContent = "";  // Rotate right for collapse
+        arrow.style.transform = "rotate(90deg)";  // Arrow pointing right
+      } else {
+        details.style.display = "flex";
+        arrow.textContent = "";  // Rotate left for expand
+        arrow.style.transform = "rotate(-90deg)";  // Arrow pointing left
+      }
+    }
+
+    function markPaid(event, checkbox) {
+      event.stopPropagation();
+      const listItem = checkbox.closest(".list-item");
+      listItem.classList.add("paid");
+      checkbox.remove();
+      document.getElementById("paidList").appendChild(listItem);
+    }
+
+    function clearForm() {
+      document.getElementById("name").value = "";
+      document.getElementById("amount").value = "";
+      document.getElementById("reason").value = "";
+      document.getElementById("date").value = "";
+      document.getElementById("time").value = "";
+    }
+  </script>
+</body>
+</html>
