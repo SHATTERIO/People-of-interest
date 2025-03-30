@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Debt Tracker</title>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+  
+  <!-- CSS -->
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -25,7 +31,7 @@
     }
     .list-item {
       background: #e3e3e3;
-      border-radius: 20px; /* Squircle effect */
+      border-radius: 20px;
       margin-bottom: 10px;
       overflow: hidden;
     }
@@ -56,14 +62,14 @@
     .toggle-arrow {
       font-size: 18px;
       margin-left: auto;
-      margin-right: -10px; /* Move further right */
+      margin-right: -10px;
     }
     .paid {
       text-decoration: line-through;
       color: green;
     }
     input, button {
-      width: 90%; /* Shrink width */
+      width: 90%;
       padding: 10px;
       margin: 5px 0;
       border: 1px solid #ccc;
@@ -73,90 +79,44 @@
       margin-right: auto;
     }
   </style>
+  
+  <!-- External JS files -->
+  <script src="firebase-config.js"></script>
+  <script src="authentication.js"></script>
+  <script src="firestore.js"></script>
 </head>
 <body>
-  <!-- Island 1: Main island with debt entry form -->
-  <div class="island" id="mainIsland">
+
+  <!-- Authentication Section -->
+  <div id="auth-container" class="island">
+    <h2>Authentication</h2>
+    <input type="email" id="email" placeholder="Enter your email">
+    <input type="password" id="password" placeholder="Enter your password">
+    <button onclick="signUp()">Sign Up</button>
+    <button onclick="signIn()">Sign In</button>
+    <button onclick="logout()">Logout</button>
+  </div>
+  
+  <!-- Debt Tracker Form -->
+  <div id="debt-form" class="island">
     <h2>New Debt</h2>
     <input type="text" id="name" placeholder="Name">
-    <input type="number" id="amount" placeholder="Amount (R)">
+    <input type="number" id="amount" placeholder="Amount">
     <input type="text" id="reason" placeholder="Reason">
     <input type="date" id="date">
     <input type="time" id="time">
-    <button onclick="addDebt()">Add Person</button>
+    <button onclick="addDebt()">Add Debt</button>
   </div>
-  <!-- Island 2: Unpaid -->
-  <div class="island" id="unpaidIsland">
+  
+  <!-- Debt Lists -->
+  <div class="island">
     <h3>Unpaid</h3>
     <div id="unpaidList"></div>
   </div>
-  <!-- Island 3: Paid -->
-  <div class="island" id="paidIsland">
+  <div class="island">
     <h3>Paid</h3>
     <div id="paidList"></div>
   </div>
 
-  <script>
-    function addDebt() {
-      const name = document.getElementById("name").value;
-      const amount = document.getElementById("amount").value;
-      const reason = document.getElementById("reason").value;
-      const date = document.getElementById("date").value;
-      const time = document.getElementById("time").value;
-      if (name && amount && reason && date && time) {
-        const listItem = document.createElement("div");
-        listItem.classList.add("list-item");
-        listItem.innerHTML = `
-          <div class="header" onclick="toggleCollapse(this)">
-            <div class="checkbox-container">
-              <input type="checkbox" onclick="markPaid(event, this)">
-            </div>
-            <div class="header-content">
-              <span><strong>${name}</strong> - R${amount}</span>
-            </div>
-            <span class="toggle-arrow">></span> <!-- Arrow for expand -->
-          </div>
-          <div class="details">
-            <div><strong>Reason:</strong> ${reason}</div>
-            <div><strong>Date:</strong> ${date}</div>
-            <div><strong>Time:</strong> ${time}</div>
-          </div>
-        `;
-        document.getElementById("unpaidList").appendChild(listItem);
-        clearForm();
-      }
-    }
-
-    function toggleCollapse(header) {
-      if (event.target.type === 'checkbox') return;
-      const details = header.nextElementSibling;
-      const arrow = header.querySelector('.toggle-arrow');
-      if (details.style.display === "flex") {
-        details.style.display = "none";
-        arrow.textContent = "";  // Rotate right for collapse
-        arrow.style.transform = "rotate(90deg)";  // Arrow pointing right
-      } else {
-        details.style.display = "flex";
-        arrow.textContent = "";  // Rotate left for expand
-        arrow.style.transform = "rotate(-90deg)";  // Arrow pointing left
-      }
-    }
-
-    function markPaid(event, checkbox) {
-      event.stopPropagation();
-      const listItem = checkbox.closest(".list-item");
-      listItem.classList.add("paid");
-      checkbox.remove();
-      document.getElementById("paidList").appendChild(listItem);
-    }
-
-    function clearForm() {
-      document.getElementById("name").value = "";
-      document.getElementById("amount").value = "";
-      document.getElementById("reason").value = "";
-      document.getElementById("date").value = "";
-      document.getElementById("time").value = "";
-    }
-  </script>
 </body>
 </html>
