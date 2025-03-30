@@ -1,122 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Debt Tracker</title>
-  <!-- Firebase SDKs -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
-  
-  <!-- CSS -->
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f5f5f5;
-      margin: 0;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    .island {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      width: 270px;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .list-item {
-      background: #e3e3e3;
-      border-radius: 20px;
-      margin-bottom: 10px;
-      overflow: hidden;
-    }
-    .header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px;
-      cursor: pointer;
-      background: #dcdcdc;
-    }
-    .header-content {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex: 1;
-    }
-    .checkbox-container {
-      margin-right: 10px;
-    }
-    .details {
-      display: none;
-      flex-direction: column;
-      text-align: left;
-      padding: 10px;
-      background: #f0f0f0;
-    }
-    .toggle-arrow {
-      font-size: 18px;
-      margin-left: auto;
-      margin-right: -10px;
-    }
-    .paid {
-      text-decoration: line-through;
-      color: green;
-    }
-    input, button {
-      width: 90%;
-      padding: 10px;
-      margin: 5px 0;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      display: block;
-      margin-left: auto;
-      margin-right: auto;
-    }
-  </style>
-  
-  <!-- External JS files -->
-  <script src="firebase-config.js"></script>
-  <script src="authentication.js"></script>
-  <script src="firestore.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Integration</title>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-firestore.js"></script>
+
+    <script>
+        // Your Firebase config object
+        const firebaseConfig = {
+            apiKey: "AIzaSyANsd06edEXRFaI_zxXxao3QX-XUMj6Jas",  // Replace with your actual API key
+            authDomain: "people-of-interest-e1889.firebaseapp.com",
+            projectId: "people-of-interest-e1889",
+            storageBucket: "people-of-interest-e1889.appspot.com",
+            messagingSenderId: "870008211518",
+            appId: "1:870008211518:web:13f31604eaeb02f15de96f"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+    </script>
+
 </head>
+
 <body>
+    <h2>Firebase Authentication & Firestore Example</h2>
 
-  <!-- Authentication Section -->
-  <div id="auth-container" class="island">
-    <h2>Authentication</h2>
-    <input type="email" id="email" placeholder="Enter your email">
-    <input type="password" id="password" placeholder="Enter your password">
-    <button onclick="signUp()">Sign Up</button>
-    <button onclick="signIn()">Sign In</button>
-    <button onclick="logout()">Logout</button>
-  </div>
-  
-  <!-- Debt Tracker Form -->
-  <div id="debt-form" class="island">
-    <h2>New Debt</h2>
-    <input type="text" id="name" placeholder="Name">
-    <input type="number" id="amount" placeholder="Amount">
-    <input type="text" id="reason" placeholder="Reason">
-    <input type="date" id="date">
-    <input type="time" id="time">
-    <button onclick="addDebt()">Add Debt</button>
-  </div>
-  
-  <!-- Debt Lists -->
-  <div class="island">
-    <h3>Unpaid</h3>
-    <div id="unpaidList"></div>
-  </div>
-  <div class="island">
-    <h3>Paid</h3>
-    <div id="paidList"></div>
-  </div>
+    <!-- Login Form -->
+    <div id="login-form">
+        <input type="email" id="emailInput" placeholder="Enter email">
+        <input type="password" id="passwordInput" placeholder="Enter password">
+        <button id="loginButton">Login</button>
+        <p id="error-message" style="color: red;"></p>
+    </div>
 
+    <!-- Add Data Form -->
+    <div id="add-data-form" style="display: none;">
+        <input type="text" id="nameInput" placeholder="Enter name">
+        <input type="number" id="ageInput" placeholder="Enter age">
+        <button id="addDataButton">Add Data</button>
+    </div>
+
+    <!-- Logout Button -->
+    <button id="logoutButton" style="display: none;">Logout</button>
+
+    <script>
+        // Login Button Event
+        document.getElementById("loginButton").addEventListener("click", function () {
+            const email = document.getElementById("emailInput").value;
+            const password = document.getElementById("passwordInput").value;
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // User signed in
+                    console.log("User signed in", userCredential);
+                    document.getElementById("login-form").style.display = "none";
+                    document.getElementById("add-data-form").style.display = "block";
+                    document.getElementById("logoutButton").style.display = "inline-block";
+                })
+                .catch((error) => {
+                    const errorCode = error.code;
+                    const errorMessage = error.message;
+                    document.getElementById("error-message").innerText = errorMessage;
+                });
+        });
+
+        // Add Data Button Event
+        document.getElementById("addDataButton").addEventListener("click", function () {
+            const name = document.getElementById("nameInput").value;
+            const age = document.getElementById("ageInput").value;
+
+            db.collection("users").add({
+                name: name,
+                age: age
+            })
+            .then((docRef) => {
+                console.log("Document written with ID:", docRef.id);
+                alert("Data added successfully!");
+                // Clear the input fields
+                document.getElementById("nameInput").value = '';
+                document.getElementById("ageInput").value = '';
+            })
+            .catch((error) => {
+                console.error("Error adding document:", error);
+            });
+        });
+
+        // Logout Button Event
+        document.getElementById("logoutButton").addEventListener("click", function () {
+            auth.signOut().then(() => {
+                console.log("User signed out");
+                document.getElementById("login-form").style.display = "block";
+                document.getElementById("add-data-form").style.display = "none";
+                document.getElementById("logoutButton").style.display = "none";
+            });
+        });
+    </script>
 </body>
+
 </html>
